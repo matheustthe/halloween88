@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="./cadastro.css">
+    <title>Minha Área</title>
+    <script>
+        const likedSongs = JSON.parse(localStorage.getItem('likedSongs')) || [];
+        const playlists = JSON.parse(localStorage.getItem('playlists')) || [];
+
+        function displayLikedSongs() {
+            const likedListElement = document.getElementById('likedSongs');
+            likedListElement.innerHTML = '';
+            if (likedSongs.length === 0) {
+                likedListElement.innerHTML = '<li><em>Nenhuma música curtida ainda.</em></li>';
+            } else {
+                likedSongs.forEach(song => {
+                    const li = document.createElement('li');
+                    li.textContent = song;
+                    likedListElement.appendChild(li);
+                });
+            }
+        }
+
+        function displayPlaylists() {
+            const playlistsElement = document.getElementById('playlists');
+            playlistsElement.innerHTML = '';
+            if (playlists.length === 0) {
+                playlistsElement.innerHTML = '<li><em>Nenhuma playlist criada ainda.</em></li>';
+            } else {
+                playlists.forEach((playlist, index) => {
+                    const li = document.createElement('li');
+                    li.innerHTML = `
+                        <strong>${playlist.name}</strong><br>
+                        Músicas: ${playlist.songs.join(', ')}
+                    `;
+                    playlistsElement.appendChild(li);
+                });
+            }
+        }
+
+        function addPlaylist() {
+            const playlistName = prompt("Nome da nova playlist:");
+            const songs = prompt("Digite as músicas separadas por vírgula:").split(',');
+
+            const newPlaylist = {
+                name: playlistName,
+                songs: songs
+            };
+            playlists.push(newPlaylist);
+            localStorage.setItem('playlists', JSON.stringify(playlists));
+
+            displayPlaylists();
+        }
+
+        function clearPlaylists() {
+            if (confirm("Tem certeza de que deseja excluir todas as playlists?")) {
+                localStorage.removeItem('playlists');
+                playlists.length = 0; // Limpa a lista local
+                displayPlaylists();
+            }
+        }
+
+        window.onload = function() {
+            displayLikedSongs();
+            displayPlaylists();
+        }
+    </script>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <img src="imagem.png" alt="Logo" height="80px" width="80px">
+            <nav>
+                <ul>
+                    <li><a href="../cadastro de msc/cadastro.html">Cadastro de Música</a></li>
+                    <li><a href="minha_area.html">Minha Área</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <div class="content">
+        <h1>Minha Área</h1>
+
+        <section>
+            <h2>Músicas Curtidas</h2>
+            <ul id="likedSongs"></ul>
+        </section>
+
+        <section>
+            <h2>Playlists Pessoais</h2>
+            <ul id="playlists"></ul>
+            <div class="buttons">
+                <button onclick="addPlaylist()">Criar Playlist</button>
+                <button onclick="clearPlaylists()">Limpar Playlists</button>
+            </div>
+        </section>
+    </div>
+</body>
+</html>

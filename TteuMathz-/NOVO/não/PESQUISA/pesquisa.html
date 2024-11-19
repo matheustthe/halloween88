@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pesquisa de Músicas</title>
+    <style>
+        /* Estilos */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Arial', sans-serif; background-color: #121212; color: #fff; display: flex; justify-content: center; align-items: center; height: 100vh; flex-direction: column; }
+        h1 { font-size: 2.5rem; margin-bottom: 20px; color: #2168ff; text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.6); }
+        a { padding: 10px 20px; margin: 20px 0; text-decoration: none; font-size: 1.2rem; color: white; background-color: #0c89ff; border-radius: 5px; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5); transition: background-color 0.3s; }
+        a:hover { background-color: #1DB954; }
+        .search-container { width: 80%; max-width: 500px; position: relative; margin-bottom: 40px; }
+        .search-box { width: 100%; padding: 15px; font-size: 18px; background-color: #333; border: none; border-radius: 50px; color: #fff; outline: none; }
+        .music-list { width: 80%; max-width: 600px; list-style-type: none; padding: 0; margin: 0; max-height: 400px; overflow-y: auto; }
+        .music-item { background-color: #222; padding: 15px; margin-bottom: 10px; border-radius: 8px; cursor: pointer; display: flex; justify-content: space-between; }
+        .music-item:hover { background-color: #333; }
+        .music-item span { font-weight: 500; font-size: 1.2rem; color: #ddd; }
+    </style>
+</head>
+<body>
+    <a href="../inicial/emAlta.html">VOLTAR</a>
+    <h1>Pesquisa de Músicas</h1>
+
+    <!-- Caixa de Pesquisa -->
+    <div class="search-container">
+        <input type="text" id="searchBox" class="search-box" placeholder="Pesquise uma música..." onkeyup="searchMusic()">
+    </div>
+
+    <!-- Lista de Músicas -->
+    <ul id="musicList" class="music-list"></ul>
+
+    <script>
+        // Função para carregar músicas armazenadas no localStorage
+        function loadMusicList() {
+            const musicList = JSON.parse(localStorage.getItem('musicList')) || [];
+            const musicListElement = document.getElementById('musicList');
+            musicListElement.innerHTML = '';
+
+            musicList.forEach(music => {
+                const li = document.createElement('li');
+                li.classList.add('music-item');
+                li.innerHTML = `
+                    <span>${music.name} - ${music.artist}</span>
+                    <button onclick="playMusic('${music.link}')">Tocar</button>
+                `;
+                musicListElement.appendChild(li);
+            });
+        }
+
+        // Função para pesquisar músicas
+        function searchMusic() {
+            const input = document.getElementById("searchBox").value.toLowerCase();
+            const musicList = document.getElementById("musicList");
+            const musicItems = musicList.getElementsByTagName("li");
+
+            for (let i = 0; i < musicItems.length; i++) {
+                let musicName = musicItems[i].getElementsByTagName("span")[0].textContent.toLowerCase();
+                if (musicName.includes(input)) {
+                    musicItems[i].style.display = "";
+                } else {
+                    musicItems[i].style.display = "none";
+                }
+            }
+        }
+
+        // Função para tocar a música
+        function playMusic(link) {
+            const musicPlayer = document.createElement('iframe');
+            musicPlayer.src = `https://w.soundcloud.com/player/?url=${link}&auto_play=true`;
+            musicPlayer.width = '100%';
+            musicPlayer.height = '166';
+            musicPlayer.frameBorder = 'no';
+            document.body.appendChild(musicPlayer);
+        }
+
+        // Carregar as músicas ao carregar a página
+        window.onload = function() {
+            loadMusicList();
+        }
+    </script>
+</body>
+</html>
